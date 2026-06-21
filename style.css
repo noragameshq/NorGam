@@ -507,3 +507,55 @@ p {
     width: 100%;
     margin-top: auto;
 }
+
+/* İletişim Bölümü (Contact) */
+.contact {
+    padding: 80px 0;
+    text-align: center;
+    background-color: var(--color-bg-main);
+}
+
+.contact__text {
+    max-width: 600px;
+    margin: 0 auto 32px auto;
+}
+
+/* Footer ve İkonlar */
+.footer__branding {
+    display: flex;
+    flex-direction: row; /* Column olan kısmı row yaptık */
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap; /* Mobilde sığmazsa alt alta geçmesi için */
+}
+.footer__text {
+    margin-bottom: 0; /* Alt boşluğu sıfırladık */
+}
+
+.footer__privacy {
+    color: var(--color-text-light);
+    text-decoration: underline;
+    font-size: 0.9rem;
+    transition: color var(--transition-speed);
+}
+
+.footer__privacy:hover {
+    color: var(--color-accent-blue);
+}
+
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-light);
+    padding: 8px;
+    border-radius: 50%;
+    background-color: var(--color-bg-alt);
+    transition: all var(--transition-speed);
+}
+
+.social-icon:hover {
+    color: white;
+    background-color: var(--color-accent-blue);
+    transform: translateY(-3px);
+}
