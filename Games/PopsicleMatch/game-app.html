@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Popsicle Match Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --border-color: #2D3748;
+            --stick-color: #E2E8F0;
+            --stick-shadow: #CBD5E1;
+            --bg-color: #F8FAFC;
+            --pink: #F472B6;
+            --green: #34D399;
+            --blue: #5CE1E6;
+            --yellow: #FFDE59;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#CBD5E1 1.5px, transparent 1.5px);
+            background-size: 25px 25px;
+            font-family: 'Fredoka One', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* --- ZORUNLU YATAY MOD (PORTRAIT UYARISI) --- */
+        #rotate-overlay {
+            display: none; /* Varsayılan olarak gizli */
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            background-image: radial-gradient(#CBD5E1 2px, transparent 2px);
+            background-size: 30px 30px;
+            z-index: 10000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .phone-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: rotatePhone 2s ease-in-out infinite;
+        }
+
+        @keyframes rotatePhone {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(-90deg); }
+            100% { transform: rotate(-90deg); }
+        }
+
+        #rotate-overlay h2 { color: var(--pink); font-size: 2.5rem; margin: 0 0 10px 0; text-shadow: 2px 2px 0 var(--border-color); }
+        #rotate-overlay p { color: var(--border-color); font-size: 1.5rem; margin: 0; }
+
+        /* Ekran Dikey İse Oyunu Gizle, Uyarıyı Göster */
+        @media screen and (orientation: portrait) {
+            #ui-header, #game-wrapper, .modal-overlay { display: none !important; }
+            #rotate-overlay { display: flex; }
+        }
+
+        /* --- HEADER LAYOUT --- */
+        #ui-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2vmin 4vmin;
+            box-sizing: border-box;
+            z-index: 50;
+        }
+
+        .header-left { flex: 1; display: flex; justify-content: flex-start; }
+        .header-center { flex: 1; display: flex; justify-content: center; }
+        .header-right { flex: 1; display: flex; justify-content: flex-end; gap: 2vmin; }
+
+        .logo {
+            font-size: 4vmin;
+            color: var(--pink);
+            text-shadow: 0.3vmin 0.3vmin 0 var(--border-color);
+            margin: 0;
+            line-height: 1;
+            transform: rotate(-3deg);
+            white-space: nowrap;
+        }
+        .logo span { color: var(--blue); }
+
+        .stats-pill {
+            background: white;
+            padding: 1vmin 3vmin;
+            border-radius: 30px;
+            border: 0.4vmin solid var(--border-color);
+            box-shadow: 0 0.6vmin 0 var(--border-color);
+            font-size: 2.5vmin;
+            color: var(--border-color);
+            display: flex;
+            gap: 3vmin;
+            white-space: nowrap;
+        }
+
+        .stats-pill span.score-text { color: var(--pink); font-size: 3vmin; }
+        .stats-pill span.level-text { color: var(--green); font-size: 3vmin; }
+
+        .btn-round {
+            background: white;
+            border: 0.4vmin solid var(--border-color);
+            border-radius: 50%;
+            width: 7vmin; height: 7vmin;
+            font-size: 3vmin;
+            cursor: pointer;
+            box-shadow: 0 0.5vmin 0 var(--border-color);
+            transition: transform 0.1s, box-shadow 0.1s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: var(--border-color);
+        }
+        .btn-round:active { transform: translateY(0.5vmin); box-shadow: 0 0 0 var(--border-color); }
+        .btn-shop { background-color: var(--yellow); }
+        .btn-info { background-color: var(--blue); }
+
+        /* --- MAIN CONTENT (SIDE BY SIDE) --- */
+        #game-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            flex-grow: 1;
+            gap: 8vmin;
+            padding: 2vmin;
+            box-sizing: border-box;
+        }
+
+        /* --- TARGET CARD (RESPONSIVE VMIN İLE ÖLÇEKLENDİRİLDİ) --- */
+        #target-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2vmin;
+        }
+
+        .target-title {
+            font-size: 4vmin;
+            color: var(--border-color);
+            text-shadow: 0.2vmin 0.2vmin 0px #FFF;
+            animation: pulseText 1.5s infinite alternate;
+        }
+
+        #target-container {
+            background: white;
+            padding: 3vmin;
+            border-radius: 3vmin;
+            box-shadow: 0 1vmin 2vmin rgba(0,0,0,0.1);
+            border: 0.8vmin solid var(--border-color);
+            position: relative;
+            z-index: 20;
+        }
+
+        @keyframes popWobble {
+            0% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.08) rotate(-4deg); }
+            50% { transform: scale(1.08) rotate(4deg); }
+            75% { transform: scale(1.04) rotate(-2deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .wobble-anim { animation: popWobble 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+
+        .target-body {
+            width: 18vmin;
+            height: 25vmin;
+            border: 0.8vmin solid var(--border-color);
+            border-radius: 9vmin 9vmin 2vmin 2vmin;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-color); 
+        }
+
+        .target-stick {
+            width: 5vmin;
+            height: 7vmin;
+            background: var(--stick-color);
+            border: 0.8vmin solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 2vmin 2vmin;
+            margin: -0.8vmin auto 0 auto;
+            z-index: 1;
+            box-shadow: inset -0.5vmin 0 0 var(--stick-shadow);
+        }
+
+        /* --- PLAY AREA --- */
+        #play-area {
+            position: relative;
+            width: 70vmin;
+            height: 70vmin;
+            border: 1.2vmin solid var(--border-color);
+            border-radius: 2vmin;
+            box-shadow: 0 2vmin 4vmin rgba(0,0,0,0.15);
+            background: white;
+            overflow: hidden;
+        }
+
+        .grid-board {
+            display: grid;
+            width: 100%;
+            height: 100%;
+            transition: all 0.5s ease;
+        }
+
+        .cell {
+            width: 100%; height: 100%;
+            box-sizing: border-box;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        /* --- DRAGGABLE FRAME --- */
+        #frame-container {
+            position: absolute;
+            cursor: grab;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+            filter: drop-shadow(0 1.5vmin 1.5vmin rgba(0,0,0,0.3));
+        }
+
+        #frame-container:active { cursor: grabbing; filter: drop-shadow(0 0.8vmin 0.8vmin rgba(0,0,0,0.4)); }
+
+        .frame-body {
+            width: 100%;
+            height: 100%;
+            border: 1.2vmin solid var(--border-color);
+            border-radius: 50% 50% 10% 10% / 30% 30% 10% 10%;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.01);
+            box-shadow: inset 0 0 2.5vmin rgba(0,0,0,0.3);
+        }
+
+        .frame-stick {
+            width: 25%;
+            height: 30%;
+            background: var(--stick-color);
+            border: 1vmin solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 2vmin 2vmin;
+            margin-top: -1vmin;
+            box-sizing: border-box;
+            box-shadow: inset -0.6vmin 0 0 var(--stick-shadow);
+        }
+
+        /* --- MODALS & OVERLAYS --- */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(45, 55, 72, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-overlay.hidden { opacity: 0; pointer-events: none; }
+
+        .modal-box {
+            background: white; padding: 4vmin; border-radius: 3vmin;
+            border: 0.8vmin solid var(--border-color); box-shadow: 0 2vmin 0 rgba(0,0,0,0.2);
+            text-align: center; max-width: 500px; width: 80%; position: relative;
+        }
+
+        .modal-box h2 { margin-top: 0; color: var(--pink); font-size: 4vmin; }
+
+        /* Video CSS Güncellemesi */
+        .tutorial-video {
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            box-sizing: border-box;
+            border: 0.5vmin solid var(--border-color);
+            border-radius: 2vmin;
+            margin-bottom: 2.5vmin;
+            background: #E2E8F0;
+            outline: none;
+            box-shadow: 0 0.5vmin 0 rgba(0,0,0,0.1);
+        }
+
+        .close-btn {
+            font-family: 'Fredoka One', cursive; font-size: 2.5vmin; padding: 1.5vmin 4vmin;
+            background-color: var(--green); color: white; border: 0.5vmin solid var(--border-color);
+            border-radius: 3vmin; cursor: pointer; box-shadow: 0 0.8vmin 0 #059669;
+        }
+        .close-btn:active { transform: translateY(0.8vmin); box-shadow: 0 0 0 #059669; }
+
+        .fullscreen-overlay { background: rgba(248, 250, 252, 0.98); z-index: 300; }
+        
+        .title-text-1 { font-size: 10vmin; color: #F472B6; margin: 0; text-shadow: 0.6vmin 0.6vmin 0 var(--border-color); line-height: 1; }
+        .title-text-2 { font-size: 8vmin; color: #5CE1E6; margin: -1vmin 0 4vmin 0; text-shadow: 0.6vmin 0.6vmin 0 var(--border-color); line-height: 1; }
+        .action-btn { font-family: 'Fredoka One', cursive; font-size: 5vmin; padding: 3vmin 10vmin; background-color: var(--green); color: white; border: 0.6vmin solid var(--border-color); border-radius: 6vmin; cursor: pointer; box-shadow: 0 1.2vmin 0 #059669; transition: all 0.1s; animation: pulseText 1.5s infinite alternate; }
+        .action-btn:active { transform: translateY(1.2vmin); box-shadow: 0 0 0 #059669; }
+
+        .confetti { position: absolute; width: 2vmin; height: 2vmin; border-radius: 50%; animation: fall 1.5s linear forwards; z-index: 350; pointer-events: none; }
+
+        @keyframes fall {
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(800px) rotate(720deg); opacity: 0; }
+        }
+        @keyframes pulseText {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+
+<div id="rotate-overlay">
+    <div class="phone-icon">📱</div>
+    <h2>Please Rotate!</h2>
+    <p>Turn your device sideways to play.</p>
+</div>
+
+<div id="ui-header">
+    <div class="header-left">
+        <h1 class="logo">Popsicle <span>Match!</span></h1>
+    </div>
+    
+    <div class="header-center">
+        <div class="stats-pill">
+            <div>Score: <span id="score-val" class="score-text">0</span></div>
+            <div>Level: <span id="level-val" class="level-text">1</span> <span style="font-size:1.8vmin; color:#94A3B8;">/ 30</span></div>
+        </div>
+    </div>
+    
+    <div class="header-right">
+        <a href="#" target="_blank" class="btn-round btn-shop" title="Get Physical Toy!">🛍️</a>
+        <button class="btn-round btn-info" id="info-btn" title="How to Play">❓</button>
+        <button class="btn-round" id="sound-btn" title="Toggle Sound">🔊</button>
+    </div>
+</div>
+
+<div id="game-wrapper">
+    
+    <div id="target-wrapper">
+        <div class="target-title">Target:</div>
+        <div id="target-container">
+            <div class="target-body" id="target-body"></div>
+            <div class="target-stick"></div>
+        </div>
+    </div>
+
+    <div id="play-area">
+        <div id="main-board" class="grid-board"></div>
+        
+        <div id="frame-container">
+            <div class="frame-body"></div>
+            <div class="frame-stick"></div>
+        </div>
+    </div>
+
+</div>
+
+<div id="how-to-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+        <h2>How to Play!</h2>
+        
+        <video class="tutorial-video" autoplay loop muted playsinline>
+            <source src="Assets/PopsicleMatch.mp4" type="video/mp4">
+        </video>
+
+        <p style="font-size: 2.2vmin; color: #475569; margin-bottom: 3vmin;">
+            Drag the digital popsicle or use your physical toy to match the exact colors shown on the target card!
+        </p>
+        <button class="close-btn" id="close-info-btn">Got it! 👍</button>
+    </div>
+</div>
+
+<div id="start-overlay" class="modal-overlay fullscreen-overlay">
+    <div style="text-align: center;">
+        <svg viewBox="0 0 120 160" width="20vmin" height="26vmin" style="filter: drop-shadow(0 2vmin 1.5vmin rgba(0,0,0,0.2)); margin-bottom: 3vmin;">
+            <rect x="50" y="110" width="20" height="40" rx="8" fill="#E2E8F0" stroke="#2D3748" stroke-width="6" />
+            <path d="M20,110 V50 A40,40 0 0,1 100,50 V110 Z" fill="#7ED957" stroke="#2D3748" stroke-width="6" />
+            <path d="M60,10 A40,40 0 0,1 100,50 V110 H60 Z" fill="#FF91A4" />
+            <path d="M20,60 H100 V110 H20 Z" fill="#FFDE59" />
+            <path d="M60,60 H100 V110 H60 Z" fill="#5CE1E6" />
+            <path d="M20,110 V50 A40,40 0 0,1 100,50 V110 Z" fill="none" stroke="#2D3748" stroke-width="8" />
+            <line x1="60" y1="10" x2="60" y2="110" stroke="#2D3748" stroke-width="6" />
+            <line x1="20" y1="60" x2="100" y2="60" stroke="#2D3748" stroke-width="6" />
+        </svg>
+        <h1 class="title-text-1">Popsicle</h1>
+        <h1 class="title-text-2">Match!</h1>
+        <button class="action-btn" id="start-btn">PLAY!</button>
+    </div>
+</div>
+
+<div id="finale-overlay" class="modal-overlay fullscreen-overlay hidden">
+    <div style="text-align: center;">
+        <h1 style="font-size: 8vmin; color: #FFDE59; text-shadow: 0.6vmin 0.6vmin 0 var(--border-color); margin-bottom: 2vmin;">YOU DID IT!</h1>
+        <h2 style="font-size: 5vmin; color: #34D399; margin-top: 0; margin-bottom: 6vmin;">All 30 Levels Completed! 🌟</h2>
+        <button class="action-btn" id="restart-btn" style="background-color: var(--pink); box-shadow: 0 1.2vmin 0 #D53F8C;">Play Again!</button>
+    </div>
+</div>
+
+<script>
+    /* --- GAME CONFIGURATION --- */
+    const PALETTE = [
+        '#FFDE59', '#FF91A4', '#7ED957', '#5CE1E6', 
+        '#C084FC', '#FBBF24', '#F472B6', '#34D399', 
+        '#60A5FA', '#A78BFA', '#F87171', '#A3E635'  
+    ];
+
+    let score = 0, level = 1, gridSize = 2;
+    const MAX_LEVEL = 30; 
+    let currentTarget = null, boardArr = []; 
+    let isDragging = false, offsetX = 0, offsetY = 0, isAnimating = false;
+
+    function randomRange(min, max) { return min + Math.random() * (max - min); }
+
+    /* --- AUDIO SYSTEM WITH DUCKING --- */
+    let audioCtx, soundEnabled = true, bgmInterval = null;
+    let bgmVolume = 0.04; 
+    
+    const melody = [
+        392.00, 440.00, 523.25, 440.00, 
+        392.00, 523.25, 659.25, 523.25, 
+        783.99, 659.25, 523.25, 440.00, 
+        392.00, 440.00, 523.25, null    
+    ];
+
+    function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playTone(freq, type, duration, vol = bgmVolume) { 
+        if (!soundEnabled || !audioCtx || !freq) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type; 
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        
+        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playPop() { playTone(400, 'sine', 0.1, 0.15); }
+    function playSnap() { playTone(800, 'square', 0.05, 0.05); }
+    function playNewCardPops() { setTimeout(() => playTone(600, 'sine', 0.1, 0.1), 50); }
+    function playWinSound() {
+        playTone(523.25, 'triangle', 0.1, 0.15);
+        setTimeout(() => playTone(659.25, 'triangle', 0.1, 0.15), 100);
+        setTimeout(() => playTone(783.99, 'triangle', 0.4, 0.15), 200);
+    }
+    function playFinaleSound() {
+        if (!soundEnabled) return;
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            setTimeout(() => playTone(freq, 'triangle', 0.3, 0.2), i * 150);
+        });
+    }
+
+    function startBGM() {
+        if (bgmInterval) clearInterval(bgmInterval);
+        let step = 0;
+        bgmInterval = setInterval(() => {
+            if (soundEnabled && audioCtx) {
+                playTone(melody[step % melody.length], 'triangle', 0.4, bgmVolume);
+                step++;
+            }
+        }, 350); 
+    }
+
+    /* --- DOM ELEMENTS --- */
+    const playArea = document.getElementById('play-area');
+    const mainBoard = document.getElementById('main-board');
+    const frame = document.getElementById('frame-container');
+    const frameBody = document.querySelector('.frame-body');
+    const targetBody = document.getElementById('target-body');
+    const targetContainer = document.getElementById('target-container');
+    const scoreVal = document.getElementById('score-val');
+    const levelVal = document.getElementById('level-val');
+    const soundBtn = document.getElementById('sound-btn');
+    const startOverlay = document.getElementById('start-overlay');
+    const finaleOverlay = document.getElementById('finale-overlay');
+    const startBtn = document.getElementById('start-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const infoBtn = document.getElementById('info-btn');
+    const howToModal = document.getElementById('how-to-modal');
+    const closeInfoBtn = document.getElementById('close-info-btn');
+
+    /* --- CORE GAME LOGIC --- */
+    function updateProgression() {
+        gridSize = level <= 10 ? 2 : 3;
+        const baseWidth = 100 / gridSize;
+        frame.style.width = (baseWidth * 0.7) + '%';
+        frame.style.height = (baseWidth * 0.85) + '%'; 
+    }
+
+    function generateBoard() {
+        mainBoard.innerHTML = '';
+        mainBoard.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+        mainBoard.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
+        boardArr = [];
+
+        const colorLimit = Math.min(4 + Math.floor((level - 1) / 10) * 4, PALETTE.length);
+        const activeColors = PALETTE.slice(0, colorLimit);
+
+        for (let r = 0; r < gridSize; r++) {
+            let rowColors = [];
+            for (let c = 0; c < gridSize; c++) {
+                let availableColors = activeColors.filter(col => {
+                    let conflict = false;
+                    if (c > 0 && rowColors[c-1] === col) conflict = true;
+                    if (r > 0 && boardArr[r-1][c] === col) conflict = true;
+                    return !conflict;
+                });
+                
+                if (availableColors.length === 0) availableColors = activeColors;
+                
+                let bg = availableColors[Math.floor(Math.random() * availableColors.length)];
+                rowColors.push(bg);
+                
+                let cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.style.backgroundColor = bg;
+                mainBoard.appendChild(cell);
+            }
+            boardArr.push(rowColors);
+        }
+    }
+
+    function generateTarget() {
+        const areaRect = playArea.getBoundingClientRect();
+        const cw = 100 / gridSize;
+        const ch = 100 / gridSize;
+        
+        let fwPx = frameBody.offsetWidth || (areaRect.width * (100/gridSize * 0.7) / 100);
+        let fhPx = frameBody.offsetHeight || (areaRect.height * (100/gridSize * 0.85) / 100);
+        
+        const fw = (fwPx / areaRect.width) * 100;
+        const fh = (fhPx / areaRect.height) * 100;
+
+        let allowedModes = ['cell', 'vedge', 'hedge', 'corner'];
+        if (gridSize === 2) allowedModes = ['cell', 'cell', 'vedge', 'hedge', 'corner'];
+
+        let type = allowedModes[Math.floor(Math.random() * allowedModes.length)];
+
+        let tx, ty, targetColors = [];
+        let marginX = fw * 0.15; 
+        let marginY = fh * 0.15;
+        let edgeX = 0, edgeY = 0;
+
+        if (type === 'cell') {
+            let c = Math.floor(Math.random() * gridSize);
+            let r = Math.floor(Math.random() * gridSize);
+            tx = randomRange(c * cw + fw/2 + 2, (c+1) * cw - fw/2 - 2);
+            ty = randomRange(r * ch + fh/2 + 2, (r+1) * ch - fh/2 - 2);
+            targetColors = [boardArr[r][c]];
+            targetBody.style.background = targetColors[0];
+        } 
+        else if (type === 'vedge') {
+            let c = Math.floor(Math.random() * (gridSize - 1));
+            let r = Math.floor(Math.random() * gridSize);
+            edgeX = (c + 1) * cw;
+            tx = randomRange(edgeX - fw/2 + marginX, edgeX + fw/2 - marginX);
+            ty = randomRange(r * ch + fh/2 + 2, (r+1) * ch - fh/2 - 2);
+            targetColors = [boardArr[r][c], boardArr[r][c+1]];
+            let ratioX = ((edgeX - (tx - fw/2)) / fw) * 100;
+            targetBody.style.background = `linear-gradient(to right, ${targetColors[0]} ${ratioX}%, ${targetColors[1]} ${ratioX}%)`;
+        } 
+        else if (type === 'hedge') {
+            let c = Math.floor(Math.random() * gridSize);
+            let r = Math.floor(Math.random() * (gridSize - 1));
+            edgeY = (r + 1) * ch;
+            tx = randomRange(c * cw + fw/2 + 2, (c+1) * cw - fw/2 - 2);
+            ty = randomRange(edgeY - fh/2 + marginY, edgeY + fh/2 - marginY);
+            targetColors = [boardArr[r][c], boardArr[r+1][c]];
+            let ratioY = ((edgeY - (ty - fh/2)) / fh) * 100;
+            targetBody.style.background = `linear-gradient(to bottom, ${targetColors[0]} ${ratioY}%, ${targetColors[1]} ${ratioY}%)`;
+        } 
+        else if (type === 'corner') {
+            let c = Math.floor(Math.random() * (gridSize - 1));
+            let r = Math.floor(Math.random() * (gridSize - 1));
+            edgeX = (c + 1) * cw;
+            edgeY = (r + 1) * ch;
+            tx = randomRange(edgeX - fw/2 + marginX, edgeX + fw/2 - marginX);
+            ty = randomRange(edgeY - fh/2 + marginY, edgeY + fh/2 - marginY);
+            targetColors = [boardArr[r][c], boardArr[r][c+1], boardArr[r+1][c], boardArr[r+1][c+1]];
+            
+            let ratioX = ((edgeX - (tx - fw/2)) / fw) * 100;
+            let ratioY = ((edgeY - (ty - fh/2)) / fh) * 100;
+
+            targetBody.style.background = `
+                linear-gradient(to right, ${targetColors[0]} ${ratioX}%, ${targetColors[1]} ${ratioX}%) top / 100% ${ratioY}% no-repeat,
+                linear-gradient(to right, ${targetColors[2]} ${ratioX}%, ${targetColors[3]} ${ratioX}%) bottom / 100% ${100 - ratioY}% no-repeat
+            `;
+        }
+
+        currentTarget = { type, tx, ty, edgeX, edgeY, targetColors };
+    }
+
+    function triggerCardAnimation() {
+        targetContainer.classList.remove('wobble-anim');
+        void targetContainer.offsetWidth; 
+        targetContainer.classList.add('wobble-anim');
+        playNewCardPops();
+    }
+
+    function resetFramePosition() {
+        frame.style.transition = 'none';
+        frame.style.left = '40%';
+        frame.style.top = '75%';
+    }
+
+    function initLevel() {
+        if (level > MAX_LEVEL) {
+            triggerFinale();
+            return;
+        }
+
+        isAnimating = false;
+        bgmVolume = 0.04; 
+        
+        updateProgression();
+        generateBoard();
+        
+        requestAnimationFrame(() => {
+            generateTarget();
+            resetFramePosition();
+            
+            if(level > 1) {
+                setTimeout(triggerCardAnimation, 100);
+            }
+        });
+    }
+
+    /* --- INTERACTION --- */
+    function startDrag(e) {
+        if (isAnimating) return;
+        isDragging = true;
+        playPop();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const rect = frame.getBoundingClientRect();
+        offsetX = clientX - rect.left;
+        offsetY = clientY - rect.top;
+        frame.style.transition = 'none';
+    }
+
+    function drag(e) {
+        if (!isDragging || isAnimating) return;
+        e.preventDefault();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const areaRect = playArea.getBoundingClientRect();
+        
+        let newLeft = clientX - areaRect.left - offsetX;
+        let newTop = clientY - areaRect.top - offsetY;
+
+        const maxLeft = areaRect.width - frameBody.offsetWidth;
+        const maxTop = areaRect.height - frameBody.offsetHeight;
+        
+        newLeft = Math.max(-10, Math.min(newLeft, maxLeft + 10));
+        newTop = Math.max(-10, Math.min(newTop, maxTop + 10));
+
+        const leftPercent = (newLeft / areaRect.width) * 100;
+        const topPercent = (newTop / areaRect.height) * 100;
+        
+        frame.style.left = leftPercent + '%';
+        frame.style.top = topPercent + '%';
+
+        checkWin(leftPercent, topPercent, areaRect);
+    }
+
+    function endDrag() {
+        if(isDragging) playSnap();
+        isDragging = false;
+        if(!isAnimating) frame.style.transition = 'left 0.2s ease, top 0.2s ease';
+    }
+
+    /* --- GÖRSEL EŞLEŞTİRME MANTIĞI --- */
+    function checkWin(leftPct, topPct, areaRect) {
+        if (!currentTarget || isAnimating) return;
+
+        const fw = (frameBody.offsetWidth / areaRect.width) * 100;
+        const fh = (frameBody.offsetHeight / areaRect.height) * 100;
+        const cx = leftPct + (fw / 2);
+        const cy = topPct + (fh / 2);
+        const cw = 100 / gridSize;
+        const ch = 100 / gridSize;
+        
+        const tol = 3.5; 
+        
+        let won = false;
+        let finalX = cx, finalY = cy;
+
+        for (let r = 0; r < gridSize; r++) {
+            for (let c = 0; c < gridSize; c++) {
+                
+                if (currentTarget.type === 'cell') {
+                    if (boardArr[r][c] === currentTarget.targetColors[0]) {
+                        if (cx - fw/2 >= c*cw - tol && cx + fw/2 <= (c+1)*cw + tol &&
+                            cy - fh/2 >= r*ch - tol && cy + fh/2 <= (r+1)*ch + tol) {
+                            won = true;
+                            finalX = (c + 0.5) * cw;
+                            finalY = (r + 0.5) * ch;
+                        }
+                    }
+                }
+                else if (currentTarget.type === 'vedge') {
+                    if (c < gridSize - 1 && 
+                        boardArr[r][c] === currentTarget.targetColors[0] && 
+                        boardArr[r][c+1] === currentTarget.targetColors[1]) {
+                        
+                        let currentEdgeX = (c + 1) * cw;
+                        let targetOffset = currentTarget.tx - currentTarget.edgeX; 
+                        let matchX = currentEdgeX + targetOffset;
+
+                        if (Math.abs(cx - matchX) <= tol &&
+                            cy - fh/2 >= r*ch - tol && cy + fh/2 <= (r+1)*ch + tol) {
+                            won = true;
+                            finalX = matchX;
+                            finalY = (r + 0.5) * ch;
+                        }
+                    }
+                }
+                else if (currentTarget.type === 'hedge') {
+                    if (r < gridSize - 1 && 
+                        boardArr[r][c] === currentTarget.targetColors[0] && 
+                        boardArr[r+1][c] === currentTarget.targetColors[1]) {
+                        
+                        let currentEdgeY = (r + 1) * ch;
+                        let targetOffset = currentTarget.ty - currentTarget.edgeY;
+                        let matchY = currentEdgeY + targetOffset;
+
+                        if (Math.abs(cy - matchY) <= tol &&
+                            cx - fw/2 >= c*cw - tol && cx + fw/2 <= (c+1)*cw + tol) {
+                            won = true;
+                            finalX = (c + 0.5) * cw;
+                            finalY = matchY;
+                        }
+                    }
+                }
+                else if (currentTarget.type === 'corner') {
+                    if (r < gridSize - 1 && c < gridSize - 1 &&
+                        boardArr[r][c] === currentTarget.targetColors[0] &&
+                        boardArr[r][c+1] === currentTarget.targetColors[1] &&
+                        boardArr[r+1][c] === currentTarget.targetColors[2] &&
+                        boardArr[r+1][c+1] === currentTarget.targetColors[3]) {
+                        
+                        let currentEdgeX = (c + 1) * cw;
+                        let currentEdgeY = (r + 1) * ch;
+                        let matchX = currentEdgeX + (currentTarget.tx - currentTarget.edgeX);
+                        let matchY = currentEdgeY + (currentTarget.ty - currentTarget.edgeY);
+
+                        if (Math.abs(cx - matchX) <= tol && Math.abs(cy - matchY) <= tol) {
+                            won = true;
+                            finalX = matchX;
+                            finalY = matchY;
+                        }
+                    }
+                }
+                if (won) break;
+            }
+            if (won) break;
+        }
+
+        if (won) {
+            isAnimating = true;
+            isDragging = false;
+            
+            bgmVolume = 0.005; 
+            
+            frame.style.transition = 'left 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), top 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            frame.style.left = (finalX - fw/2) + '%';
+            frame.style.top = (finalY - fh/2) + '%';
+            
+            playWinSound(); createConfetti(playArea);
+            setTimeout(animateCardToScore, 800);
+        }
+    }
+
+    function animateCardToScore() {
+        const clone = targetContainer.cloneNode(true);
+        const cardRect = targetContainer.getBoundingClientRect();
+        const scoreRect = document.querySelector('.stats-pill').getBoundingClientRect();
+
+        clone.style.position = 'fixed';
+        clone.style.left = cardRect.left + 'px'; clone.style.top = cardRect.top + 'px';
+        clone.style.width = cardRect.width + 'px'; clone.style.height = cardRect.height + 'px';
+        clone.style.margin = '0'; clone.style.zIndex = '1000';
+        clone.style.transition = 'all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)';
+        clone.style.pointerEvents = 'none';
+
+        document.body.appendChild(clone);
+
+        requestAnimationFrame(() => {
+            clone.style.left = (scoreRect.left + scoreRect.width / 2 - 25) + 'px';
+            clone.style.top = scoreRect.top + 'px';
+            clone.style.transform = 'scale(0.1)';
+            clone.style.opacity = '0';
+        });
+
+        setTimeout(() => {
+            clone.remove(); score += 10; level++;
+            scoreVal.innerText = score; 
+            levelVal.innerText = level > MAX_LEVEL ? MAX_LEVEL : level;
+            
+            scoreVal.parentElement.style.transition = 'transform 0.2s';
+            scoreVal.parentElement.style.transform = 'scale(1.3)';
+            setTimeout(() => scoreVal.parentElement.style.transform = 'scale(1)', 200);
+
+            initLevel();
+        }, 600);
+    }
+
+    /* --- BÜYÜK FİNAL --- */
+    function triggerFinale() {
+        finaleOverlay.classList.remove('hidden');
+        bgmVolume = 0.005; 
+        playFinaleSound();
+        let confettiInterval = setInterval(() => {
+            createConfetti(finaleOverlay);
+        }, 300);
+        
+        setTimeout(() => clearInterval(confettiInterval), 3000);
+    }
+
+    function restartGame() {
+        score = 0; level = 1;
+        scoreVal.innerText = score;
+        levelVal.innerText = level;
+        finaleOverlay.classList.add('hidden');
+        initLevel();
+    }
+
+    function createConfetti(container) {
+        for(let i = 0; i < 20; i++) {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            confetti.style.left = (Math.random() * 100) + '%';
+            confetti.style.top = (Math.random() * 20) + '%';
+            confetti.style.backgroundColor = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+            confetti.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
+            container.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 3000);
+        }
+    }
+
+    /* --- EVENT LISTENERS --- */
+    frame.addEventListener('mousedown', startDrag);
+    window.addEventListener('mousemove', drag);
+    window.addEventListener('mouseup', endDrag);
+
+    frame.addEventListener('touchstart', startDrag, {passive: false});
+    window.addEventListener('touchmove', drag, {passive: false});
+    window.addEventListener('touchend', endDrag);
+
+    soundBtn.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        soundBtn.innerText = soundEnabled ? '🔊' : '🔇';
+        if (soundEnabled) { initAudio(); startBGM(); } 
+        else { clearInterval(bgmInterval); }
+    });
+
+    startBtn.addEventListener('click', () => {
+        initAudio(); startBGM();
+        startOverlay.classList.add('hidden');
+        initLevel();
+    });
+
+    restartBtn.addEventListener('click', restartGame);
+    infoBtn.addEventListener('click', () => howToModal.classList.remove('hidden'));
+    closeInfoBtn.addEventListener('click', () => howToModal.classList.add('hidden'));
+
+    window.addEventListener('resize', () => { if(!isAnimating && currentTarget && level <= MAX_LEVEL) generateTarget(); });
+
+</script>
+</body>
+</html>

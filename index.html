@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoraGames.io</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="page">
+    
+    <header class="header">
+        <div class="header__container">
+            <a href="#" class="header__logo">NoraGames.io</a>
+            <nav class="header__nav">
+                <ul class="header__nav-list">
+                    <li class="header__nav-item"><a href="#play" class="header__nav-link">Play</a></li>
+                    <li class="header__nav-item"><a href="#shop" class="header__nav-link">Shop Toys</a></li>
+                    <li class="header__nav-item"><a href="#printables" class="header__nav-link">Printables</a></li>
+                    <li class="header__nav-item"><a href="#about" class="header__nav-link">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="hero">
+            <div class="hero__container">
+                <h1 class="hero__title">Turn Screen Time into Play Time.</h1>
+                <p class="hero__subtitle">Explore our interactive STEM simulations and bring the learning into the real world with our 3D-printed educational kits and DIY printables.</p>
+                <a href="#play" class="button button--primary hero__cta">Start Exploring</a>
+            </div>
+        </section>
+
+<section id="play" class="playground">
+    <div class="playground__container">
+        <h2 class="section-title">Game Library</h2>
+        
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="age-4-6">👶 Ages 4-6</button>
+            <button class="filter-btn" data-filter="colors">🎨 Colors & Matching</button>
+            <button class="filter-btn" data-filter="stem">🔬 STEM</button>
+        </div>
+
+        <div class="game-grid">
+            
+            <article class="game-card" data-category="age-4-6 colors">
+                <div class="game-card__media">
+                    <div class="game-card__placeholder">
+                        <span style="font-size: 3rem;">🍦</span>
+                    </div>
+                </div>
+                
+                <div class="game-card__content">
+                    <div class="game-card__tags">
+                        <span class="tag">Ages 4-6</span>
+                        <span class="tag">30 Levels</span>
+                    </div>
+                    <h3 class="game-card__title">Popsicle Match</h3>
+                    <p class="game-card__desc">Match colors and shapes to build fun digital popsicles!</p>
+                    
+                    <a href="Games/PopsicleMatch/index.html" class="button button--primary button--full">Play Now</a>
+                </div>
+            </article>
+            
+        </div>
+    </div>
+</section>
+
+        <section id="shop" class="shop">
+            <div class="shop__container">
+                <h2 class="section-title">Bring the Magic Home</h2>
+                <div class="shop__grid">
+                    
+                    <article class="card shop__item">
+                        <h3 class="card__title">NoraSTEMToys</h3>
+                        <h4 class="card__subtitle">Physical 3D-Printed Kits</h4>
+                        <p class="card__text">Premium, movable, and educational mechanisms delivered to your door.</p>
+                        <a href="#" class="button button--accent-green">Shop NoraSTEMToys on Etsy</a>
+                    </article>
+
+                    <article id="printables" class="card shop__item">
+                        <h3 class="card__title">NoraPrintables</h3>
+                        <h4 class="card__subtitle">Instant Download DIY Crafts</h4>
+                        <p class="card__text">Paper templates, coloring activities, and craft guides to make at home.</p>
+                        <a href="#" class="button button--accent-blue">Shop NoraPrintables on Etsy</a>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <div class="about__container">
+                <h2 class="section-title">Crafted by an Educator</h2>
+                <p class="about__text">Designed with pedagogical principles to bridge the gap between digital curiosity and physical creation. Every toy, template, and game is crafted to inspire the next generation of builders.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer__container">
+            <p class="footer__text">Copyright 2026 NoraGames.io.</p>
+            <div class="footer__socials">
+                <a href="https://pinterest.com/" class="footer__social-link" target="_blank" rel="noopener noreferrer">Pinterest (@norastemtoys / @noraprintables)</a>
+                <span class="footer__divider">|</span>
+                <a href="https://instagram.com/" class="footer__social-link" target="_blank" rel="noopener noreferrer">Instagram (@norastemtoys / @noraprintables)</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
