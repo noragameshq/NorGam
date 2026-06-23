@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nora Paint & Color</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --border-color: #2D3748;
+            --bg-color: #F8FAFC;
+            --panel-bg: #FFFFFF;
+            --pink: #F472B6;
+            --green: #34D399;
+            --blue: #5CE1E6;
+            --yellow: #FFDE59;
+            --purple: #C084FC;
+            --red: #F87171;
+            --dark: #334155;
+            --gray: #E2E8F0;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#CBD5E1 1.5px, transparent 1.5px);
+            background-size: 25px 25px;
+            font-family: 'Fredoka One', cursive;
+            display: flex; flex-direction: column; align-items: center;
+            height: 100dvh; overflow: hidden; touch-action: none;
+            user-select: none; -webkit-user-select: none;
+        }
+
+        /* --- ZORUNLU YATAY MOD --- */
+        #rotate-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); z-index: 10000;
+            flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        }
+        .phone-icon { font-size: 6vmin; margin-bottom: 2vmin; animation: rotatePhone 2s ease-in-out infinite; }
+        @keyframes rotatePhone { 0% { transform: rotate(0deg); } 50% { transform: rotate(-90deg); } 100% { transform: rotate(-90deg); } }
+        #rotate-overlay h2 { color: var(--pink); font-size: 4vmin; margin: 0 0 1vmin 0; text-shadow: 0.3vmin 0.3vmin 0 var(--border-color); }
+        
+        @media screen and (orientation: portrait) {
+            #rotate-overlay { display: flex; }
+            #app-layout { display: none !important; }
+        }
+
+        #app-layout { display: flex; flex-direction: column; width: 100%; height: 100%; box-sizing: border-box; }
+
+        /* --- HEADER --- */
+        #ui-header { display: flex; justify-content: space-between; align-items: center; padding: 1.5vmin 3vmin; box-sizing: border-box; z-index: 50; }
+        .logo { font-size: 3.2vmin; color: var(--purple); text-shadow: 0.3vmin 0.3vmin 0 var(--border-color); margin: 0; }
+        .logo span { color: var(--yellow); }
+        
+        .header-actions { display: flex; gap: 2vmin; }
+        .btn-action {
+            font-family: 'Fredoka One', cursive; font-size: 1.8vmin; padding: 1.2vmin 3vmin;
+            background: white; color: var(--border-color); border: 0.4vmin solid var(--border-color);
+            border-radius: 3vmin; cursor: pointer; box-shadow: 0 0.5vmin 0 var(--border-color);
+            display: flex; align-items: center; gap: 1vmin; transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .btn-action:active { transform: translateY(0.5vmin); box-shadow: 0 0 0 var(--border-color); }
+        .btn-clear { background-color: var(--red); color: white; }
+        .btn-save { background-color: var(--green); color: white; }
+
+        /* --- WORKSPACE --- */
+        #workspace { display: flex; flex-direction: row; flex-grow: 1; gap: 2.5vmin; padding: 0 3vmin 3vmin 3vmin; box-sizing: border-box; overflow: hidden; }
+
+        /* Sol Kokpit */
+        .side-panel {
+            width: 17vmin; background: var(--panel-bg); border: 0.6vmin solid var(--border-color);
+            border-radius: 3vmin; box-shadow: 0 1vmin 2vmin rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center; padding: 1.5vmin 1vmin; gap: 1.2vmin;
+            box-sizing: border-box;
+        }
+        
+        .section-label { font-size: 1.5vmin; color: #64748B; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Boyut Seçici */
+        .size-row { display: flex; gap: 1vmin; width: 100%; justify-content: center; }
+        .size-btn {
+            width: 4.5vmin; height: 4.5vmin; border-radius: 50%; border: 0.3vmin solid var(--gray);
+            background: white; cursor: pointer; display: flex; justify-content: center; align-items: center;
+            transition: all 0.2s; padding: 0;
+        }
+        .size-btn.active { border-color: var(--border-color); transform: scale(1.15); box-shadow: 0 0.4vmin 0 var(--border-color); }
+        .size-btn .dot { background: var(--dark); border-radius: 50%; }
+        .size-sm .dot { width: 1.2vmin; height: 1.2vmin; }
+        .size-md .dot { width: 2.2vmin; height: 2.2vmin; }
+        .size-lg .dot { width: 3.2vmin; height: 3.2vmin; }
+
+        /* Fırça Efekt Butonları */
+        .effect-btn {
+            width: 92%; padding: 1.5vmin; border-radius: 1.5vmin; border: 0.3vmin solid var(--gray);
+            background: white; font-family: 'Fredoka One', cursive; font-size: 1.8vmin; color: var(--dark);
+            display: flex; align-items: center; gap: 1vmin; cursor: pointer; transition: all 0.2s;
+            box-sizing: border-box; text-align: left;
+        }
+        .effect-btn.active {
+            border-color: var(--border-color); background: var(--yellow);
+            color: var(--border-color); transform: scale(1.05); box-shadow: 0 0.5vmin 0 var(--border-color);
+        }
+
+        /* Navigasyon Okları (YENİ) */
+        .nav-arrows {
+            display: flex; gap: 1vmin; width: 92%; justify-content: space-between;
+        }
+        .nav-btn {
+            flex: 1; padding: 1.5vmin 0; border-radius: 1.5vmin; border: 0.3vmin solid var(--gray);
+            background: var(--bg-color); color: var(--dark); font-size: 2.5vmin; cursor: pointer;
+            transition: all 0.2s; box-sizing: border-box; display: flex; justify-content: center; align-items: center;
+        }
+        .nav-btn:active { transform: scale(0.95); background: var(--gray); border-color: var(--border-color); }
+
+        .divider { width: 80%; height: 0.3vmin; background: var(--gray); margin: 0.5vmin 0; }
+
+        /* Renk Paleti (Sağ) */
+        .color-grid { display: grid; grid-template-columns: 1fr; gap: 1.2vmin; width: 100%; justify-items: center; }
+        .color-btn { width: 5.5vmin; height: 5.5vmin; border-radius: 1.5vmin; border: 0.4vmin solid var(--border-color); cursor: pointer; box-shadow: 0 0.4vmin 0 rgba(0,0,0,0.2); transition: transform 0.1s; }
+        .color-btn.active { transform: scale(1.2) translateY(-0.3vmin); box-shadow: 0 0.8vmin 0 rgba(0,0,0,0.2); }
+
+        /* Tuval Alanı */
+        #canvas-wrapper {
+            flex-grow: 1; position: relative; border: 0.8vmin solid var(--border-color);
+            border-radius: 3vmin; background: white; box-shadow: 0 1.5vmin 3vmin rgba(0,0,0,0.1);
+            overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        #drawing-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; touch-action: none; }
+
+        #coloring-template {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: contain; z-index: 20; pointer-events: none;
+        }
+
+        .pop-anim { animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+<div id="rotate-overlay">
+    <div class="phone-icon">📱</div>
+    <h2>Please Rotate!</h2>
+    <h3 style="color:var(--dark); margin:0;">Turn your device sideways to paint.</h3>
+</div>
+
+<div id="app-layout">
+    <header id="ui-header">
+        <h1 class="logo">Nora <span>Paint</span> 🎨</h1>
+        <div class="header-actions">
+            <button class="btn-action btn-clear" id="btn-clear">🗑️ Clear</button>
+            <button class="btn-action btn-save" id="btn-save">💾 Save Art</button>
+        </div>
+    </header>
+
+    <main id="workspace">
+        <aside class="side-panel">
+            <span class="section-label">Size</span>
+            <div class="size-row">
+                <button class="size-btn size-sm" data-size="8"><div class="dot"></div></button>
+                <button class="size-btn size-md active" data-size="20"><div class="dot"></div></button>
+                <button class="size-btn size-lg" data-size="40"><div class="dot"></div></button>
+            </div>
+
+            <div class="divider"></div>
+
+            <span class="section-label">Brushes</span>
+            <button class="effect-btn active" data-effect="normal">🖌️ Basic</button>
+            <button class="effect-btn" data-effect="water">💧 Water</button>
+            <button class="effect-btn" data-effect="acrylic">🎨 Acrylic</button>
+            <button class="effect-btn" data-effect="spray">💨 Spray</button>
+
+            <div class="divider"></div>
+
+            <button class="effect-btn" id="btn-eraser" style="background:#FEE2E2; color:#991B1B; border-color:#FCA5A5;">🧹 Eraser</button>
+
+            <div class="divider"></div>
+            
+            <span class="section-label">Pages</span>
+            <div class="nav-arrows">
+                <button class="nav-btn" id="btn-prev" title="Previous Page">◀</button>
+                <button class="nav-btn" id="btn-next" title="Next Page">▶</button>
+            </div>
+        </aside>
+
+        <section id="canvas-wrapper">
+            <canvas id="drawing-canvas"></canvas>
+            <img id="coloring-template" src="" alt="Template" style="display: none;">
+        </section>
+
+        <aside class="side-panel" style="width:12vmin;">
+            <span class="section-label">Colors</span>
+            <div class="color-grid" id="color-palette"></div>
+        </aside>
+    </main>
+</div>
+
+<script>
+   const TEMPLATES=["","Assets/dog.png","Assets/turtle.png"],COLORS=["#334155","#EF4444","#F97316","#FFDE59","#84CC16","#06B6D4","#3B82F6","#A855F7","#EC4899","#FFFFFF"];let currentColor=COLORS[0],currentSize=20,currentEffect="normal",isEraser=!1,currentTemplateIndex=0,isDrawing=!1,lastX=0,lastY=0;const canvas=document.getElementById("drawing-canvas"),ctx=canvas.getContext("2d",{willReadFrequently:!0}),wrapper=document.getElementById("canvas-wrapper"),templateImg=document.getElementById("coloring-template"),colorPalette=document.getElementById("color-palette"),sizeBtns=document.querySelectorAll(".size-btn"),effectBtns=document.querySelectorAll(".effect-btn:not(#btn-eraser)"),eraserBtn=document.getElementById("btn-eraser"),clearBtn=document.getElementById("btn-clear"),saveBtn=document.getElementById("btn-save"),btnPrev=document.getElementById("btn-prev"),btnNext=document.getElementById("btn-next");function loadTemplate(t){const e=TEMPLATES[t];e?(templateImg.src=e,templateImg.style.display="block"):templateImg.style.display="none",ctx.save(),ctx.setTransform(1,0,0,1,0,0),ctx.fillStyle="#FFFFFF",ctx.fillRect(0,0,canvas.width,canvas.height),ctx.restore()}function initColors(){colorPalette.innerHTML="",COLORS.forEach((t,e)=>{const n=document.createElement("button");n.className="color-btn"+(0===e?" active":""),n.style.backgroundColor=t,n.dataset.color=t,n.addEventListener("click",()=>{currentColor=t,isEraser=!1,updateActiveTool(colorPalette.children,n),eraserBtn.classList.remove("active");const e=Array.from(effectBtns).find(t=>t.dataset.effect===currentEffect);e&&updateActiveTool(effectBtns,e)}),colorPalette.appendChild(n)})}function resizeCanvas(){const t=wrapper.getBoundingClientRect(),e=window.devicePixelRatio||1,n=document.createElement("canvas");n.width=canvas.width,n.height=canvas.height,n.getContext("2d").drawImage(canvas,0,0),canvas.width=t.width*e,canvas.height=t.height*e,canvas.style.width=`${t.width}px`,canvas.style.height=`${t.height}px`,ctx.scale(e,e),0===n.width?(ctx.fillStyle="#FFFFFF",ctx.fillRect(0,0,t.width,t.height)):ctx.drawImage(n,0,0,t.width,t.height)}function getPointerPos(t){const e=canvas.getBoundingClientRect(),n=t.touches?t.touches[0].clientX:t.clientX,a=t.touches?t.touches[0].clientY:t.clientY;return{x:n-e.left,y:a-e.top}}function startDrawing(t){isDrawing=!0;const e=getPointerPos(t);lastX=e.x,lastY=e.y,renderBrushStroke(e.x,e.y,!0)}function draw(t){if(!isDrawing)return;t.preventDefault();const e=getPointerPos(t);"spray"!==currentEffect||isEraser?renderBrushStroke(e.x,e.y,!1):renderSprayInterpolation(lastX,lastY,e.x,e.y),lastX=e.x,lastY=e.y}function stopDrawing(){isDrawing=!1}function renderBrushStroke(t,e,n){ctx.lineCap="round",ctx.lineJoin="round",isEraser?(ctx.globalAlpha=1,ctx.shadowBlur=0,ctx.strokeStyle="#FFFFFF",ctx.lineWidth=currentSize,ctx.beginPath(),ctx.moveTo(lastX,lastY),ctx.lineTo(t,e),ctx.stroke()):"normal"===currentEffect?(ctx.globalAlpha=1,ctx.shadowBlur=0,ctx.strokeStyle=currentColor,ctx.lineWidth=currentSize,ctx.beginPath(),ctx.moveTo(lastX,lastY),ctx.lineTo(t,e),ctx.stroke()):"water"===currentEffect?(ctx.globalAlpha=.22,ctx.shadowColor=currentColor,ctx.shadowBlur=.5*currentSize,ctx.strokeStyle=currentColor,ctx.lineWidth=currentSize,ctx.beginPath(),ctx.moveTo(lastX,lastY),ctx.lineTo(t,e),ctx.stroke(),ctx.shadowBlur=0):"acrylic"===currentEffect&&(ctx.globalAlpha=.96,ctx.shadowColor="rgba(0,0,0,0.2)",ctx.shadowBlur=2,ctx.shadowOffsetX=1,ctx.shadowOffsetY=1,ctx.strokeStyle=currentColor,ctx.lineWidth=currentSize,ctx.beginPath(),ctx.moveTo(lastX,lastY),ctx.lineTo(t,e),ctx.stroke(),ctx.shadowBlur=0,ctx.shadowOffsetX=0,ctx.shadowOffsetY=0),n&&"spray"!==currentEffect&&(ctx.beginPath(),ctx.moveTo(t,e),ctx.lineTo(t+.1,e+.1),ctx.stroke())}function renderSprayInterpolation(t,e,n,a){ctx.globalAlpha=.8,ctx.shadowBlur=0,ctx.fillStyle=currentColor;const c=Math.hypot(n-t,a-e),r=Math.max(1,Math.floor(c/3)),s=Math.floor(.8*currentSize),o=currentSize/2;for(let c=0;c<=r;c++){const l=t+c/r*(n-t),i=e+c/r*(a-e);for(let t=0;t<s;t++){const t=Math.random()*Math.PI*2,e=Math.random()*o;ctx.fillRect(l+e*Math.cos(t),i+e*Math.sin(t),1.5,1.5)}}}function updateActiveTool(t,e){Array.from(t).forEach(t=>t.classList.remove("active")),e.classList.add("active")}canvas.addEventListener("mousedown",startDrawing),canvas.addEventListener("mousemove",draw),canvas.addEventListener("mouseup",stopDrawing),canvas.addEventListener("mouseout",stopDrawing),canvas.addEventListener("touchstart",startDrawing,{passive:!1}),canvas.addEventListener("touchmove",draw,{passive:!1}),canvas.addEventListener("touchend",stopDrawing),sizeBtns.forEach(t=>{t.addEventListener("click",()=>{currentSize=parseInt(t.dataset.size),updateActiveTool(sizeBtns,t)})}),effectBtns.forEach(t=>{t.addEventListener("click",()=>{currentEffect=t.dataset.effect,isEraser=!1,updateActiveTool(effectBtns,t),eraserBtn.classList.remove("active")})}),eraserBtn.addEventListener("click",()=>{isEraser=!0,eraserBtn.classList.add("active"),effectBtns.forEach(t=>t.classList.remove("active"))}),clearBtn.addEventListener("click",()=>{ctx.save(),ctx.setTransform(1,0,0,1,0,0),ctx.fillStyle="#FFFFFF",ctx.fillRect(0,0,canvas.width,canvas.height),ctx.restore(),clearBtn.classList.add("pop-anim"),setTimeout(()=>clearBtn.classList.remove("pop-anim"),300)}),saveBtn.addEventListener("click",()=>{const t=document.createElement("canvas");t.width=canvas.width,t.height=canvas.height;const e=t.getContext("2d");if(e.fillStyle="#FFFFFF",e.fillRect(0,0,t.width,t.height),e.drawImage(canvas,0,0),"block"===templateImg.style.display&&templateImg.src)try{e.drawImage(templateImg,0,0,t.width,t.height)}catch(t){console.warn("Şablon resmi birleştirilemedi.",t)}try{const e=t.toDataURL("image/png"),n=document.createElement("a");n.download="Nora_Paint_Art.png",n.href=e,document.body.appendChild(n),n.click(),document.body.removeChild(n)}catch(t){alert("İndirme işlemi güvenlik ayarlarınca engellendi. (Oyunu bir sunucuya yüklediğinizde bu sorun düzelecektir.)")}saveBtn.classList.add("pop-anim"),setTimeout(()=>saveBtn.classList.remove("pop-anim"),300)}),btnPrev.addEventListener("click",()=>{currentTemplateIndex--,currentTemplateIndex<0&&(currentTemplateIndex=TEMPLATES.length-1),loadTemplate(currentTemplateIndex),btnPrev.classList.add("pop-anim"),setTimeout(()=>btnPrev.classList.remove("pop-anim"),300)}),btnNext.addEventListener("click",()=>{currentTemplateIndex++,currentTemplateIndex>=TEMPLATES.length&&(currentTemplateIndex=0),loadTemplate(currentTemplateIndex),btnNext.classList.add("pop-anim"),setTimeout(()=>btnNext.classList.remove("pop-anim"),300)}),window.addEventListener("resize",resizeCanvas),initColors(),setTimeout(resizeCanvas,100);
+</script>
+</body>
+</html>
