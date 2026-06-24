@@ -68,11 +68,23 @@
         #workspace { display: flex; flex-direction: row; flex-grow: 1; gap: 2.5vmin; padding: 0 3vmin 3vmin 3vmin; box-sizing: border-box; overflow: hidden; }
 
         /* Sol Kokpit */
+       /* Sağdaki ve Soldaki Kokpitler */
         .side-panel {
-            width: 17vmin; background: var(--panel-bg); border: 0.6vmin solid var(--border-color);
-            border-radius: 3vmin; box-shadow: 0 1vmin 2vmin rgba(0,0,0,0.05);
-            display: flex; flex-direction: column; align-items: center; padding: 1.5vmin 1vmin; gap: 1.2vmin;
+            width: 17vmin; 
+            background: var(--panel-bg); 
+            border: 0.6vmin solid var(--border-color);
+            border-radius: 3vmin; 
+            box-shadow: 0 1vmin 2vmin rgba(0,0,0,0.05);
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 1.5vmin 1vmin; 
+            gap: 1.2vmin;
             box-sizing: border-box;
+            
+            /* EKLENEN KOD: İçerik çoksa aşağı kaydırmayı açar, yatay kaydırmayı gizler */
+            overflow-y: auto; 
+            overflow-x: hidden;
         }
         
         .section-label { font-size: 1.5vmin; color: #64748B; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
@@ -199,29 +211,35 @@
 </div>
 
 <script>
-    const TEMPLATES = [
+   const TEMPLATES = [
         "", // Blank Page
-		"Assets/cat.png",
+        "Assets/cat.png",
         "Assets/dog.png",
-		"Assets/home.png",
-		"Assets/winter.png",
-		"Assets/turtle.png",
-		"Assets/koala.png",
-		"Assets/elephant.png",
-		"Assets/jungle.png",
-		"Assets/shark.png",
-		"Assets/lion.png",
-		"Assets/unicorn.png",
-		"Assets/dragon.png",
-		"Assets/dinasour.png",
-		"Assets/trucks.png",
-		"Assets/car.png",
-		"Assets/firetruck.png",
-		"Assets/astronaut.png",
-		"Assets/space.png",	
+        "Assets/home.png",
+        "Assets/winter.png",
+        "Assets/turtle.png",
+        "Assets/koala.png",
+        "Assets/elephant.png",
+        "Assets/jungle.png",
+        "Assets/shark.png",
+        "Assets/lion.png",
+        "Assets/unicorn.png",
+        "Assets/dragon.png",
+        "Assets/dinosaur.png",
+        "Assets/trucks.png",
+        "Assets/car.png",
+        "Assets/firetruck.png",
+        "Assets/astronaut.png",
+        "Assets/space.png"
     ];
 
-    const COLORS = ['#334155', '#EF4444', '#F97316', '#FFDE59', '#84CC16', '#06B6D4', '#3B82F6', '#A855F7', '#EC4899', '#FFFFFF'];
+    // Genişletilmiş ve çocuklara uygun 20'li renk paleti
+    const COLORS = [
+        '#334155', '#EF4444', '#F87171', '#F97316', '#FDBA74', 
+        '#FFDE59', '#FEF08A', '#84CC16', '#4ADE80', '#A3E635', 
+        '#06B6D4', '#67E8F9', '#3B82F6', '#93C5FD', '#A855F7', 
+        '#D8B4FE', '#EC4899', '#F9A8D4', '#9CA3AF', '#FFFFFF'
+    ];
 
     let currentColor = COLORS[0];
     let currentSize = 20;
@@ -258,6 +276,7 @@
         
         ctx.save();
         ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.globalAlpha = 1.0;
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.restore();
@@ -304,17 +323,20 @@
         }
     }
 
-    // Modern Pointer Events Koordinat Okuyucu (Mouse + Touch + Pen destekler)
+    // Gelişmiş Koordinat Okuyucu (Mouse + Touch uyumlu)
     function getPointerPos(e) {
         const rect = canvas.getBoundingClientRect();
-        return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
     }
 
     /* --- SANAT FIRÇALARI ÇİZİM MOTORU --- */
     function startDrawing(e) {
+        if(e.cancelable) e.preventDefault(); 
         isDrawing = true;
-        // Çizim yaparken parmak hafifçe tuvalin dışına kaysa bile çizmeyi bırakmamasını sağlar
-        canvas.setPointerCapture(e.pointerId);
+        
+        if(e.pointerId) canvas.setPointerCapture(e.pointerId);
         
         const pos = getPointerPos(e);
         lastX = pos.x; lastY = pos.y;
@@ -323,7 +345,7 @@
 
     function draw(e) {
         if (!isDrawing) return;
-        e.preventDefault();
+        if(e.cancelable) e.preventDefault(); 
         
         const pos = getPointerPos(e);
 
@@ -338,7 +360,7 @@
 
     function stopDrawing(e) { 
         if(isDrawing) {
-            canvas.releasePointerCapture(e.pointerId);
+            if(e && e.pointerId) canvas.releasePointerCapture(e.pointerId);
             isDrawing = false; 
         }
     }
@@ -398,7 +420,12 @@
         }
     }
 
-    /* --- MODERN POINTER EVENTS (Bilgisayar, Tablet, Telefon Bir Arada) --- */
+    /* --- EVENT LISTENERS (DOKUNMATİK EKRAN KORUMALARI) --- */
+    canvas.addEventListener('touchstart', startDrawing, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchcancel', stopDrawing);
+
     canvas.addEventListener('pointerdown', startDrawing); 
     canvas.addEventListener('pointermove', draw);
     canvas.addEventListener('pointerup', stopDrawing); 
@@ -423,21 +450,17 @@
         effectBtns.forEach(b => b.classList.remove('active'));
     });
 
-/* --- CLEAR (TEMİZLE) BUTONU --- */
+    /* --- DÜZELTİLMİŞ CLEAR (TEMİZLE) BUTONU --- */
     clearBtn.addEventListener('click', () => {
         ctx.save();
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        
-        // SİHİRLİ DOKUNUŞ: Silmeden önce şeffaflığı iptal edip %100 opak beyaza çevirir
-        ctx.globalAlpha = 1.0; 
-        
+        ctx.globalAlpha = 1.0; // Sulu boya modunda kalsa bile %100 beyaz ile siler
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.restore();
         
         clearBtn.classList.add('pop-anim'); 
         setTimeout(() => clearBtn.classList.remove('pop-anim'), 300);
-    
     });
 
     saveBtn.addEventListener('click', () => {
@@ -492,7 +515,7 @@
     window.addEventListener('resize', resizeCanvas);
     function updateActiveTool(list, activeBtn) { Array.from(list).forEach(btn => btn.classList.remove('active')); activeBtn.classList.add('active'); }
 
-    initColors(); setTimeout(resizeCanvas, 100); 
+    initColors(); setTimeout(resizeCanvas, 100);
 </script>
 </body>
 </html>
