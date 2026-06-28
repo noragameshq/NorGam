@@ -10,14 +10,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="page">
-    
+<body class="page">   
     <header class="header">
         <div class="header__container">
             <a href="#" class="header__logo">
                 <img src="Assets/nora-games-logo.png" alt="Nora Games Official Logo" style="height: 45px; width: auto; display: block;">
-            </a>
-            
+            </a>           
             <nav class="header__nav">
                 <ul class="header__nav-list">
                     <li class="header__nav-item"><a href="#play" class="header__nav-link">Play</a></li>
@@ -28,7 +26,6 @@
             </nav>
         </div>
     </header>
-
     <main>
         <section id="hero" class="hero">
             <div class="hero__container">
@@ -37,18 +34,15 @@
                 <a href="#play" class="button button--primary hero__cta">Start Exploring</a>
             </div>
         </section>
-
         <section id="play" class="playground">
             <div class="playground__container">
-                <h2 class="section-title">Game Library</h2>
-                
+                <h2 class="section-title">Game Library</h2>                
                 <div class="filters">
                     <button class="filter-btn active" data-filter="all">All</button>
                     <button class="filter-btn" data-filter="age-4-6">👶 Ages 4-6</button>
                     <button class="filter-btn" data-filter="colors">🎨 Colors & Matching</button>
                     <button class="filter-btn" data-filter="stem">🔬 STEM</button>
                 </div>
-
               <div class="game-grid">
                 <article class="game-card" data-category="age-4-6 colors">
             <div class="game-card__media">
@@ -63,8 +57,7 @@
             <p class="game-card__desc">Match colors and shapes to build fun digital popsicles!</p>
             <a href="Games/PopsicleMatch/index.html" class="button button--primary button--full">Play Now</a>
         </div>	
-        </article>
-		
+        </article>		
 		<article class="game-card" data-category="age-4-6 colors">
     <div class="game-card__media">
         <img src="Assets/PaintCover.png" alt="Paint game cover image" class="game-card__image">
@@ -78,38 +71,46 @@
         <p class="game-card__desc">Unleash your creativity with magical brushes, colors, and fun coloring pages!</p>
         <a href="Games/Paint/index.html" class="button button--primary button--full">Play Now</a>
     </div>	
+</article>		
+
+<article class="game-card" data-category="age-3-7 logic puzzles">
+    <div class="game-card__media">
+        <img src="Assets/BlocksCover.png" alt="Nora Blocks game cover image" class="game-card__image">
+    </div>
+    <div class="game-card__content">
+        <div class="game-card__tags">
+            <span class="tag">Ages 3-7</span>
+            <span class="tag">Logic</span>
+            <span class="tag">Patterns</span>
+        </div>
+        <h3 class="game-card__title">Nora Blocks</h3>
+        <p class="game-card__desc">Drag and drop colorful 3D blocks to match fun patterns and build your spatial skills!</p>
+        <a href="Games/NoraBlocks/index.html" class="button button--primary button--full">Play Now</a>
+    </div>	
 </article>
-		
-		
-</div>
-                    
+</div>                  
                 </div>
             </div>
         </section>
-
         <section id="shop" class="shop">
             <div class="shop__container">
                 <h2 class="section-title">Bring the Magic Home</h2>
-                <div class="shop__grid">
-                    
+                <div class="shop__grid">                   
                     <article class="card shop__item">
                         <img src="Assets/nora-stemtoys-block.png" alt="Nora STEMToys Store" style="max-height: 100px; width: auto; margin-bottom: 16px;">
                         <h4 class="card__subtitle">Physical 3D-Printed Kits</h4>
                         <p class="card__text">Premium, movable, and educational mechanisms delivered to your door.</p>
                         <a href="#" class="button button--accent-green">Shop NoraSTEMToys</a>
                     </article>
-
                     <article id="printables" class="card shop__item">                  
                         <img src="Assets/nora-printables-block.png" alt="Nora Printables Store" style="max-height: 100px; width: auto; margin-bottom: 16px;">
                         <h4 class="card__subtitle">Instant Download DIY Crafts</h4>
                         <p class="card__text">Paper templates, coloring activities, and craft guides to make at home.</p>
                         <a href="#" class="button button--accent-blue">Shop NoraPrintables</a>
                     </article>
-
                 </div>
             </div>
         </section>
-
         <section id="about" class="about">
             <div class="about__container">
                 <h2 class="section-title">Crafted by an Educator</h2>
@@ -117,29 +118,21 @@
             </div>
         </section>
     </main>
-
-<!--  İLETİŞİM BÖLÜMÜ -->
 <section id="contact" class="contact">
             <div class="contact__container" style="max-width: 600px; margin: 0 auto; padding: 0 24px; text-align: left;">
-                
                 <h2 class="section-title" style="text-align: center;">Contact Us</h2>
                 <p class="contact__subtitle" style="text-align: center; margin-bottom: 32px;">Have questions, feedback, or need support with a specific game? We love getting feedback from our community!</p>
-                
-                <form action="https://formsubmit.co/noragameshq@gmail.com" method="POST" class="contact__form" style="display: flex; flex-direction: column; gap: 20px;">
-                    
+                <form action="https://formsubmit.co/noragameshq@gmail.com" method="POST" class="contact__form" style="display: flex; flex-direction: column; gap: 20px;">              
                     <input type="hidden" name="_captcha" value="false">
-                    <input type="hidden" name="_next" value="https://noragameshq.github.io/NorGam/">
-                    
+                    <input type="hidden" name="_next" value="https://noragameshq.github.io/NorGam/">                    
                     <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                         <label for="email" style="font-weight: 600; color: var(--color-text);">Email Address</label>
                         <input type="email" id="email" name="email" required placeholder="Enter your email address" style="width: 100%; padding: 14px; border: 2px solid #CBD5E1; border-radius: 12px; font-family: var(--font-primary); font-size: 1rem; color: var(--color-text); transition: border-color 0.3s;" onfocus="this.style.borderColor='var(--color-accent-blue)'" onblur="this.style.borderColor='#CBD5E1'">
-                    </div>
-                    
+                    </div>                   
                     <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                         <label for="message" style="font-weight: 600; color: var(--color-text);">Your Message</label>
                         <textarea id="message" name="message" required rows="5" placeholder="Please be descriptive; the more info you provide, the more we can help." style="width: 100%; padding: 14px; border: 2px solid #CBD5E1; border-radius: 12px; font-family: var(--font-primary); font-size: 1rem; color: var(--color-text); resize: vertical; transition: border-color 0.3s;" onfocus="this.style.borderColor='var(--color-accent-blue)'" onblur="this.style.borderColor='#CBD5E1'"></textarea>
-                    </div>
-                    
+                    </div>                   
                     <div class="form-group" style="display: flex; flex-direction: column; gap: 8px;">
                         <label for="game-select" style="font-weight: 600; color: var(--color-text);">Having trouble with a specific game? (Optional)</label>
                         <select id="game-select" name="related_game" style="width: 100%; padding: 14px; border: 2px solid #CBD5E1; border-radius: 12px; font-family: var(--font-primary); font-size: 1rem; color: var(--color-text); background-color: white; cursor: pointer; transition: border-color 0.3s;" onfocus="this.style.borderColor='var(--color-accent-blue)'" onblur="this.style.borderColor='#CBD5E1'">
@@ -156,14 +149,11 @@
                     </div>                  
                     <p class="form-disclaimer" style="font-size: 0.85rem; color: var(--color-text-light); margin-top: 8px; line-height: 1.4;">
                         By clicking SEND, you certify that you have read and agreed to our <a href="privacy.html" style="color: var(--color-accent-blue); text-decoration: underline;">Privacy Policy</a>.
-                    </p>
-                    
-                    <button type="submit" class="button button--primary" style="width: fit-content; min-width: 160px; padding: 14px 32px; font-weight: 700; cursor: pointer; background-color: var(--color-accent-green);">SEND</button>
-                    
+                    </p>    
+                    <button type="submit" class="button button--primary" style="width: fit-content; min-width: 160px; padding: 14px 32px; font-weight: 700; cursor: pointer; background-color: var(--color-accent-green);">SEND</button>                   
                 </form>
             </div>
         </section>
-
   <footer class="footer">
         <div class="footer__container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
             <div class="footer__branding">
@@ -171,15 +161,12 @@
                 <span class="footer__divider" style="margin: 0 12px; color: var(--color-text-light);">|</span>
                 <a href="privacy.html" class="footer__privacy">Privacy Policy</a>
             </div>
-        
-            <!-- Sosyal Medya İkonlarını Yan Yana Tutan Kutu -->
             <div class="footer__socials" style="display: flex; gap: 16px; align-items: center;">
                 <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
                     </svg>
                 </a>
-
                 <a href="https://pinterest.com/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Pinterest">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                         <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.951-7.252 4.168 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.367 18.592 0 12.017 0z"/>
@@ -188,8 +175,6 @@
             </div>
         </div>
     </footer>
-
-
     <script src="script.js"></script>
 </body>
 </html>
