@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NoraGames.io</title>
+    <title>NoraGames</title>
     <link rel="icon" type="image/png" href="Assets/favicon.png">   
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,60 +34,114 @@
                 <a href="#play" class="button button--primary hero__cta">Start Exploring</a>
             </div>
         </section>
-        <section id="play" class="playground">
-            <div class="playground__container">
-                <h2 class="section-title">Game Library</h2>                
-                <div class="filters">
-                    <button class="filter-btn active" data-filter="all">All</button>
-                    <button class="filter-btn" data-filter="age-4-6">👶 Ages 4-6</button>
-                    <button class="filter-btn" data-filter="colors">🎨 Colors & Matching</button>
-                    <button class="filter-btn" data-filter="stem">🔬 STEM</button>
-                </div>
-              <div class="game-grid">
-                <article class="game-card" data-category="age-4-6 colors">
-            <div class="game-card__media">
-                <img src="Assets/PopsicleMatchCover.png" alt="Popsicle Match game cover image" class="game-card__image">
-                </div>
-            <div class="game-card__content">
-            <div class="game-card__tags">
-                <span class="tag">Ages 4-6</span>
-                <span class="tag">30 Levels</span>
-            </div>
-            <h3 class="game-card__title">Popsicle Match</h3>
-            <p class="game-card__desc">Match colors and shapes to build fun digital popsicles!</p>
-            <a href="Games/PopsicleMatch/index.html" class="button button--primary button--full">Play Now</a>
-        </div>	
-        </article>		
-		<article class="game-card" data-category="age-4-6 colors">
-    <div class="game-card__media">
-        <img src="Assets/PaintCover.png" alt="Paint game cover image" class="game-card__image">
-    </div>
-    <div class="game-card__content">
-        <div class="game-card__tags">
-            <span class="tag">Ages 4+</span>
-            <span class="tag">Drawing</span>
+<section id="play" class="playground">
+    <div class="playground__container">
+        <h2 class="section-title">Game Library</h2>
+        
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="age-3-5">👶 Ages 3-5</button>
+            <button class="filter-btn" data-filter="age-5-7">🧒 Ages 5-7</button>
+            <button class="filter-btn" data-filter="art">🎨 Art & Colors</button>
+            <button class="filter-btn" data-filter="logic">🧩 Logic & Matching</button>
+            <button class="filter-btn" data-filter="stem">🔬 STEM</button>
         </div>
-        <h3 class="game-card__title">Paint & Color</h3>
-        <p class="game-card__desc">Unleash your creativity with magical brushes, colors, and fun coloring pages!</p>
-        <a href="Games/Paint/index.html" class="button button--primary button--full">Play Now</a>
-    </div>	
-</article>		
 
-<article class="game-card" data-category="age-3-7 logic puzzles">
-    <div class="game-card__media">
-        <img src="Assets/BlocksCover.png" alt="Nora Blocks game cover image" class="game-card__image">
-    </div>
-    <div class="game-card__content">
-        <div class="game-card__tags">
-            <span class="tag">Ages 3-7</span>
-            <span class="tag">Logic</span>
-            <span class="tag">Patterns</span>
+        <div class="game-grid">
+            
+            <article class="game-card" data-category="age-3-5 age-5-7 logic stem">
+                <div class="game-card__media">
+                    <img src="Assets/NoraBlocksCover.png" alt="Nora Blocks game cover image" class="game-card__image">
+                </div>
+                <div class="game-card__content">
+                    <div class="game-card__tags">
+                        <span class="tag">Ages 3-7</span>
+                        <span class="tag">Logic & Patterns</span>
+                    </div>
+                    <h3 class="game-card__title">Nora Blocks</h3>
+                    <p class="game-card__desc">Drag and drop colorful 3D blocks to match fun patterns and build your spatial skills!</p>
+                    <a href="Games/NoraBlocks/index.html" class="button button--primary button--full">Play Now</a>
+                </div>  
+            </article>
+
+            <article class="game-card" data-category="age-3-5 age-5-7 logic art">
+                <div class="game-card__media">
+                    <img src="Assets/PopsicleMatchCover.png" alt="Popsicle Match game cover image" class="game-card__image">
+                </div>
+                <div class="game-card__content">
+                    <div class="game-card__tags">
+                        <span class="tag">Ages 4-6</span>
+                        <span class="tag">30 Levels</span>
+                    </div>
+                    <h3 class="game-card__title">Popsicle Match</h3>
+                    <p class="game-card__desc">Match colors and shapes to build fun digital popsicles!</p>
+                    <a href="Games/PopsicleMatch/index.html" class="button button--primary button--full">Play Now</a>
+                </div>  
+            </article>
+
+            <article class="game-card" data-category="age-3-5 logic">
+                <div class="game-card__media">
+                    <img src="Assets/ShadowMatchCover.png" alt="Shadow Match game cover image" class="game-card__image">
+                </div>
+                <div class="game-card__content">
+                    <div class="game-card__tags">
+                        <span class="tag">Ages 3-5</span>
+                        <span class="tag">Visual Perception</span>
+                    </div>
+                    <h3 class="game-card__title">Shadow Match</h3>
+                    <p class="game-card__desc">Match cute animals like foxes, cats, and dogs to their bold shadow outlines!</p>
+                    <a href="Games/ShadowMatch/index.html" class="button button--primary button--full">Play Now</a>
+                </div>  
+            </article>
+
+            <article class="game-card" data-category="age-5-7 stem logic">
+                <div class="game-card__media">
+                    <img src="Assets/TickTockShapesCover.png" alt="Tick Tock Shapes game cover image" class="game-card__image">
+                </div>
+                <div class="game-card__content">
+                    <div class="game-card__tags">
+                        <span class="tag">Ages 5-7</span>
+                        <span class="tag">Time & Shapes</span>
+                    </div>
+                    <h3 class="game-card__title">Tick Tock Shapes</h3>
+                    <p class="game-card__desc">Learn to tell time with our interactive clock application while matching geometric shapes.</p>
+                    <a href="Games/TickTockShapes/index.html" class="button button--primary button--full">Play Now</a>
+                </div>  
+            </article>
+
+            <article class="game-card" data-category="age-3-5 age-5-7 art">
+                <div class="game-card__media">
+                    <img src="Assets/NoraPaintCover.png" alt="Nora Paint game cover image" class="game-card__image">
+                </div>
+                <div class="game-card__content">
+                    <div class="game-card__tags">
+                        <span class="tag">Ages 3-7</span>
+                        <span class="tag">Drawing</span>
+                    </div>
+                    <h3 class="game-card__title">Nora Paint</h3>
+                    <p class="game-card__desc">Unleash your creativity with magical brushes, bold colors, and fun coloring pages!</p>
+                    <a href="Games/NoraPaint/index.html" class="button button--primary button--full">Play Now</a>
+                </div>  
+            </article>
+
+            <article class="game-card" data-category="age-5-7 art stem">
+                <div class="game-card__media">
+                    <img src="Assets/PixelArtCover.png" alt="Pixel Art game cover image" class="game-card__image">
+                </div>
+                <div class="game-card__content">
+                    <div class="game-card__tags">
+                        <span class="tag">Ages 5-7</span>
+                        <span class="tag">Grid & Colors</span>
+                    </div>
+                    <h3 class="game-card__title">Pixel Art</h3>
+                    <p class="game-card__desc">Draw minimal pixel art designs and learn basic grid logic in a colorful way.</p>
+                    <a href="Games/PixelArt/index.html" class="button button--primary button--full">Play Now</a>
+                </div>  
+            </article>
+
         </div>
-        <h3 class="game-card__title">Nora Blocks</h3>
-        <p class="game-card__desc">Drag and drop colorful 3D blocks to match fun patterns and build your spatial skills!</p>
-        <a href="Games/NoraBlocks/index.html" class="button button--primary button--full">Play Now</a>
-    </div>	
-</article>
+    </div>
+</section>
 </div>                  
                 </div>
             </div>
